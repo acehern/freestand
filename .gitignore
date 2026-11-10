@@ -1,0 +1,9 @@
+node_modules/
+android/
+.idea/
+*.apk
+*.aab
+.DS_Store
+dist/
+build/
+.~lock.*#
