@@ -173,6 +173,7 @@ canvas{background:#fff}
       <div style="color:var(--mut);font-size:12px;line-height:1.35;margin-top:8px">When on, the chord chart key matches the detected MP3 key, then stays locked when you shift the track ±1.</div>
     </div>
     <button id="th" style="width:100%;background:var(--bg);color:var(--fg)"></button>
+    <a id="bmc" href="https://www.buymeacoffee.com/acehern" target="_blank" rel="noopener noreferrer" style="display:block;width:100%;margin-top:8px;box-sizing:border-box;text-align:center;text-decoration:none;background:#FFDD00;color:#000;padding:12px 14px;border-radius:10px;line-height:1.35"><span style="display:block;font-size:12px;font-weight:600;opacity:.85;margin-bottom:2px">Loving this app?</span><span style="display:block;font-size:15px;font-weight:700">☕ Buy me a coffee</span></a>
   </div>
   <div class="row" id="tabs" style="margin-bottom:10px"><button data-v="songs" style="flex:1">Songs</button><button data-v="sets" style="flex:1">Setlists</button></div>
   <div class="row" id="top">
@@ -1541,6 +1542,7 @@ $('aud').addEventListener('play',()=>{
 const isDark=()=>{const t=document.documentElement.getAttribute('data-theme');return t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches};
 const themeLbl=()=>{$('th').textContent=isDark()?'\u2600\ufe0f Switch to light mode':'\ud83c\udf19 Switch to dark mode'};
 $('th').onclick=()=>{const t=isDark()?'light':'dark';document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem('theme',t)}catch(_){}themeLbl()};
+$('bmc').onclick=()=>{if($('menu'))$('menu').style.display='none'};
 
 
 autoKeyLbl();
