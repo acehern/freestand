@@ -225,8 +225,8 @@ canvas{background:#fff}
     <button type="button" id="btnImportStand" style="width:100%;margin-top:6px;background:var(--bg);color:var(--fg)">Import library (.stand)</button>
     <button type="button" id="btnExportSet" style="width:100%;margin-top:6px;background:var(--bg);color:var(--fg)">Export setlist (.set)</button>
     <button type="button" id="btnImportSet" style="width:100%;margin-top:6px;background:var(--bg);color:var(--fg)">Import setlist (.set)</button>
-    <input type="file" id="importStandFile" accept=".stand,application/zip,application/octet-stream" style="display:none">
-    <input type="file" id="importSetFile" accept=".set,application/zip,application/octet-stream" style="display:none">
+    <input type="file" id="importStandFile" accept=".stand,.stand.zip,.zip,application/zip,application/octet-stream" style="display:none">
+    <input type="file" id="importSetFile" accept=".set,.set.zip,.zip,application/zip,application/octet-stream" style="display:none">
     <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--bg)">
       <div style="color:var(--mut);font-size:12px;margin-bottom:6px">Google Drive <span style="opacity:.8">(optional)</span></div>
       <div id="driveStatus" style="font-size:12px;color:var(--mut);margin-bottom:6px">Not connected</div>
@@ -2191,6 +2191,17 @@ async function standImportStandFile(file){
   if(typeof JSZip==='undefined'){toast('Zip library failed to load');return}
   toast('Importing library…');
   const zip=await JSZip.loadAsync(file);
+  try{
+    const mf=zip.file('manifest.json');
+    if(mf){
+      const man=JSON.parse(await mf.async('string'));
+      if(man && man.format==='freestand.set'){
+        toast('This file is a setlist pack — importing as .set');
+        return standImportSetFile(file);
+      }
+    }
+  }catch(_){}
+
   const existing=await standExistingFingerprints();
   const folders=new Set();
   zip.forEach((path,file)=>{
@@ -2402,7 +2413,11 @@ async function driveListStandFiles(){
   const q=encodeURIComponent("'"+folder+"' in parents and trashed=false");
   const res=await driveFetch('https://www.googleapis.com/drive/v3/files?q='+q+'&spaces=drive&fields=files(id,name,modifiedTime,size)&orderBy=modifiedTime desc&pageSize=50');
   const data=await res.json();
-  return (data.files||[]).filter(f=>/\.(stand|set)$/i.test(f.name||''));
+  return (data.files||[]).filter(f=>{
+    const n=(f.name||'').toLowerCase();
+    return /\.(stand|set)(\.zip)?$/i.test(n) || /\.(stand|set)$/i.test(n.replace(/\.zip$/,''))
+      || (n.endsWith('.zip') && /(stand|set|freestand|library|setlist)/i.test(n));
+  });
 }
 async function driveDownloadFile(id){
   const res=await driveFetch('https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(id)+'?alt=media');
@@ -2498,7 +2513,9 @@ $('btnDriveOpen')&&($('btnDriveOpen').onclick=async()=>{
             const name=(btn.dataset.driveName||'').toLowerCase();
             const file=new File([blob], btn.dataset.driveName||'import.stand', {type:'application/octet-stream'});
             $('drivePickerModal').style.display='none';
-            if(name.endsWith('.set')) await standImportSetFile(file);
+            const isSet=/(\.set(\.zip)?$)|([_-]setlist)|(^setlist)/i.test(name) && !/\.stand/i.test(name)
+              || /\.set(\.zip)?$/i.test(name);
+            if(isSet) await standImportSetFile(file);
             else await standImportStandFile(file);
           }catch(e){console.error(e);toast(e.message||'Download failed')}
         };
