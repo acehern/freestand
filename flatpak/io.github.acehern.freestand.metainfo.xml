@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.acehern.freestand</id>
+  <name>Free Stand</name>
+  <summary>Chord charts and setlists for worship teams</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <developer id="io.github.acehern"><name>Casey Herron</name></developer>
+  <description>
+    <p>Free Stand is a free, open source song stand for worship teams. Keep chord charts and MP3s together, transpose, and build setlists.</p>
+  </description>
+  <launchable type="desktop-id">io.github.acehern.freestand.desktop</launchable>
+  <url type="homepage">https://acehern.github.io/freestand/</url>
+  <url type="bugtracker">https://github.com/acehern/freestand/issues</url>
+  <url type="donation">https://buymeacoffee.com/acehern</url>
+  <content_rating type="oars-1.1"/>
+  <releases><release version="1.0.3" date="2026-11-14"/></releases>
+</component>

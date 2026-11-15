@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Free Stand
+Comment=Chord charts, audio and setlists for worship teams
+Exec=freestand
+Icon=io.github.acehern.freestand
+Categories=AudioVideo;Music;
+Terminal=false
