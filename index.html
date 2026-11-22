@@ -7,7 +7,7 @@
 :root{--bg:#faf9f7;--fg:#1c1b1a;--card:#efece6;--acc:#7c3aed;--mut:#6b6862;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141413;--fg:#f0eee9;--card:#232220;--acc:#8b5cf6;--mut:#a09c94}}
 :root[data-theme="dark"]{--bg:#141413;--fg:#f0eee9;--card:#232220;--acc:#8b5cf6;--mut:#a09c94}
-*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--fg);font:16px system-ui,sans-serif}
+*{box-sizing:border-box;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}input,textarea,[contenteditable="true"],select{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}html,body{margin:0;background:var(--bg);color:var(--fg);font:16px system-ui,sans-serif}
 header{position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);padding:12px 16px;z-index:5}
 h1{font-size:20px;margin:0 0 10px}
 .row{display:flex;gap:8px}
@@ -268,18 +268,18 @@ canvas{background:#fff}
     <div style="font-size:12px;opacity:.7;margin:0 4px 6px">Charts</div>
     <div id="vmcharts" style="display:grid;gap:6px;margin-bottom:12px"></div>
   </div>
-  <label style="display:flex;align-items:flex-start;gap:10px;padding:8px 6px;cursor:pointer;font-size:15px">
+  <label style="display:none;align-items:flex-start;gap:10px;padding:8px 6px;cursor:pointer;font-size:15px">
     <input type="checkbox" id="vmfmt" style="width:18px;height:18px;margin-top:2px;flex-shrink:0">
     <span>
       <span style="display:block">Formatted chart view <span style="font-size:11px;opacity:.85;font-weight:600;background:rgba(255,255,255,.15);padding:1px 6px;border-radius:6px;margin-left:4px">Beta</span></span>
       <span style="display:block;font-size:11px;opacity:.7;line-height:1.35;margin-top:4px;font-weight:400">Rebuilds the PDF text into a clean chord-over-lyric layout (best for text-based charts). Still experimental — some charts may not layout perfectly.</span>
     </span>
   </label>
-  <button type="button" id="vmarr" class="tb" style="width:100%;margin-top:10px;background:#444;text-align:left;padding:10px 12px">Edit arrangement…</button>
+  <button type="button" id="vmarr" class="tb" style="display:none;width:100%;margin-top:10px;background:#444;text-align:left;padding:10px 12px">Edit arrangement…</button>
 </div>
 </div>
 
-<div id="arrbar" aria-label="Song arrangement">
+<div id="arrbar" aria-label="Song arrangement" style="display:none!important">
   <h3>Arrangement <span style="font-size:11px;opacity:.8;background:rgba(255,255,255,.12);padding:1px 6px;border-radius:6px">Beta</span></h3>
   <div class="row-label">Available sections — drag into arrangement</div>
   <div id="arrAvail"></div>
@@ -587,8 +587,7 @@ async function openSong(s,start,q,i,ci){
   if(!$('viewer').classList.contains('on')){$('ld').src=$('cover').src;$('ld').style.display='block'}$('viewer').classList.add('on');
   try{const buf=ch.blob?await ch.blob.arrayBuffer():await (await fetch('/_blob/'+ch.asset)).arrayBuffer();doc=await pdfjsLib.getDocument({data:new Uint8Array(buf)}).promise}catch(e){toast('Couldn\u2019t open this PDF.');closeSong();return}
   annLoad();
-  if(ch.formatted){await showFormattedChart(s,ch,start==='end');go(start==='end'?doc.numPages:(start||getPg(s)));}
-  else{hideFormattedChart();go(start==='end'?doc.numPages:(start||getPg(s)));}
+  hideFormattedChart();go(start==='end'?doc.numPages:(start||getPg(s)));
   flashBar();
 }
 
@@ -1368,8 +1367,8 @@ function applyShift(){
   try{ASRC.disconnect()}catch(_){}
   if(ash===0)ASRC.connect(ACX.destination);else{JG.set(ash);ASRC.connect(JG.input)}
 }
-let autoKey=false,autoKeyBaseTr=0,autoKeyBaseAsh=0,chartKeyT=null;
-try{autoKey=localStorage.getItem('fs_autokey')==='1'}catch(_){}
+let autoKey=true,autoKeyBaseTr=0,autoKeyBaseAsh=0,chartKeyT=null;
+try{autoKey=localStorage.getItem('fs_autokey')!=='0'}catch(_){ }
 function autoKeyLbl(){
   const b=$('autokey'),k=$('autokeyknob');if(!b)return;
   b.setAttribute('aria-checked',autoKey?'true':'false');
