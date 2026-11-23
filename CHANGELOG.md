@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.5 — 2026-11-22
+
+- Add an interactive in-app tutorial, accessible again from the menu.
+- Keep text-selection menus suppressed and the beta chart and arrangement controls removed.
+
 ## 1.0.4 — 2026-11-22
 
 - Suppress text selection and long-press cut, copy, and select-all menus across the app while keeping form fields editable.
